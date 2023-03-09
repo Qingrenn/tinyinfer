@@ -1,5 +1,5 @@
-#ifndef MAT_H
-#define MAT_H
+#ifndef TINYINFO_MAT_H
+#define TINYINFO_MAT_H
 
 #include "common.h"
 #include "allocator.h"
@@ -93,6 +93,23 @@ public:
     template<typename T>
     void fill(T val);
 
+    // pixel tools
+    enum PixelType
+    {
+        PIXEL_FORMAT_MASK = 0x0000ffff,
+        PIXEL_CONVERT_MASK = 0xffff0000,
+
+        PIXEL_RGB = 1,
+        PIXEL_BGR = 2,
+        PIXEL_GRAY = 3,
+    };
+
+    static Mat from_pixels(const unsigned char* pixels, int type, int w, int h, Allocator* allocator);
+    static Mat from_pixels(const unsigned char* pixels, int type, int w, int h, int stride, Allocator* allocator);
+
+    void to_pixels(unsigned char* pixels, int type) const;
+    void to_pixels(unsigned char* pixels, int type, int stride) const;
+
 public:
     void* data;
 
@@ -114,102 +131,102 @@ public:
     size_t cstep;
 };
 
-Mat::Mat()
+FORCEINLINE Mat::Mat()
     : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
 {
 }
 
-Mat::Mat(int _w, size_t _elemsize, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, size_t _elemsize, Allocator* _allocator)
     : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
 {
     create(_w, _elemsize, _allocator);
 }
 
-Mat::Mat(int _w, int _h, size_t _elemsize, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, size_t _elemsize, Allocator* _allocator)
     : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
 {
     create(_w, _h, _elemsize, _allocator);
 }
 
-Mat::Mat(int _w, int _h, int _c, size_t _elemsize, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, int _c, size_t _elemsize, Allocator* _allocator)
     : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
 {
     create(_w, _h, _c, _elemsize, _allocator);
 }
 
-Mat::Mat(int _w, int _h, int _d, int _c, size_t _elemsize, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, int _d, int _c, size_t _elemsize, Allocator* _allocator)
     : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
 {
     create(_w, _h, _d, _c, _elemsize, _allocator);
 }
 
-Mat::Mat(int _w, size_t _elemsize, int _elempack, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, size_t _elemsize, int _elempack, Allocator* _allocator)
     : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
 {
     create(_w, _elemsize, _elempack, _allocator);
 }
 
-Mat::Mat(int _w, int _h, int _d, int _c, size_t _elemsize, int _elempack, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, int _d, int _c, size_t _elemsize, int _elempack, Allocator* _allocator)
     : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
 {
     create(_w, _h, _d, _c, _elemsize, _elempack, _allocator);
 }
 
-Mat::Mat(int _w, void* _data, size_t _elemsize, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, void* _data, size_t _elemsize, Allocator* _allocator)
     : data(_data), allocator(_allocator), refcount(0), elemsize(_elemsize), elempack(1), dims(1), w(_w), h(1), d(1), c(1)
 {
     cstep = w;
 }
 
-Mat::Mat(int _w, int _h, void* _data, size_t _elemsize, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, void* _data, size_t _elemsize, Allocator* _allocator)
     : data(_data), allocator(_allocator), refcount(0), elemsize(_elemsize), elempack(1), dims(2), w(_w), h(_h), d(1), c(1)
 {
     cstep = (size_t)w * h;
 }
 
-Mat::Mat(int _w, int _h, int _c, void* _data, size_t _elemsize, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, int _c, void* _data, size_t _elemsize, Allocator* _allocator)
     : data(_data), allocator(_allocator), refcount(0), elemsize(_elemsize), elempack(1), dims(3), w(_w), h(_h), d(1), c(_c)
 {
     cstep = alignSize((size_t)w * h * elemsize, 16) / elemsize;
 }
 
-Mat::Mat(int _w, int _h, int _d, int _c, void* _data, size_t _elemsize, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, int _d, int _c, void* _data, size_t _elemsize, Allocator* _allocator)
     : data(_data), allocator(_allocator), refcount(0), elemsize(_elemsize), elempack(1), dims(4), w(_w), h(_h), d(_d), c(_c)
 {
     cstep = alignSize((size_t)w * h * d * elemsize, 16) / elemsize;
 }
 
-Mat::Mat(int _w, void* _data, size_t _elemsize, int _elempack, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, void* _data, size_t _elemsize, int _elempack, Allocator* _allocator)
     : data(_data), allocator(_allocator), refcount(0), elemsize(_elemsize), elempack(_elempack), dims(1), w(_w), h(1), d(1), c(1)
 {
     cstep = w;
 }
 
-Mat::Mat(int _w, int _h, void* _data, size_t _elemsize, int _elempack, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, void* _data, size_t _elemsize, int _elempack, Allocator* _allocator)
     : data(_data), allocator(_allocator), refcount(0), elemsize(_elemsize), elempack(_elempack), dims(2), w(_w), h(_h), d(1), c(1)
 {
     cstep = (size_t)w * h;
 }
 
-Mat::Mat(int _w, int _h, int _c, void* _data, size_t _elemsize, int _elempack, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, int _c, void* _data, size_t _elemsize, int _elempack, Allocator* _allocator)
     : data(_data), allocator(_allocator), refcount(0), elemsize(_elemsize), elempack(_elempack), dims(3), w(_w), h(_h), d(1), c(_c)
 {
     cstep = alignSize((size_t)w * h * elemsize, 16) / elemsize;
 }
 
-Mat::Mat(int _w, int _h, int _d, int _c, void* _data, size_t _elemsize, int _elempack, Allocator* _allocator)
+FORCEINLINE Mat::Mat(int _w, int _h, int _d, int _c, void* _data, size_t _elemsize, int _elempack, Allocator* _allocator)
     : data(_data), allocator(_allocator), refcount(0), elemsize(_elemsize), elempack(_elempack), dims(4), w(_w), h(_h), d(_d), c(_c)
 {
     cstep = alignSize((size_t)w * h * d * elemsize, 16) / elemsize;
 }
 
-Mat::Mat(const Mat& m)
+FORCEINLINE Mat::Mat(const Mat& m)
     : data(m.data), refcount(m.refcount), elemsize(m.elemsize), elempack(m.elempack), allocator(m.allocator), dims(m.dims), w(m.w), h(m.h), d(m.d), c(m.c), cstep(m.cstep)
 {
     addref();
 }
 
-Mat& Mat::operator=(const Mat& m)
+FORCEINLINE Mat& Mat::operator=(const Mat& m)
 {
     if (this == &m)
         return *this;
@@ -233,37 +250,37 @@ Mat& Mat::operator=(const Mat& m)
     return *this;
 }
 
-Mat::~Mat()
+FORCEINLINE Mat::~Mat()
 {
     release();
 }
 
 template<typename T>
-T* Mat::row(int y)
+FORCEINLINE T* Mat::row(int y)
 {
     return (T*)((unsigned char*)data + (size_t)w * y * elemsize);
 }
 
 template<typename T>
-const T* Mat::row(int y) const
+FORCEINLINE const T* Mat::row(int y) const
 {
     return (const T*)((unsigned char*)data + (size_t)w * y * elemsize);
 }
 
 template<typename T>
-Mat::operator T* ()
+FORCEINLINE Mat::operator T* ()
 {
     return (T*)data;
 }
 
 template<typename T>
-Mat::operator const T* () const
+FORCEINLINE Mat::operator const T* () const
 {
     return (T*)data;
 }
 
 template<typename T>
-void Mat::fill(T val)
+FORCEINLINE void Mat::fill(T val)
 {
     assert(sizeof(T) == elemsize);
 

@@ -10,6 +10,8 @@
         fprintf(stderr, "\n");          \
     } while (0);
 
+#define FORCEINLINE inline __attribute__((__always_inline__))
+
 #define ATOMIC_ADD(addr, delta) std::atomic_fetch_add(addr, delta)
 
 #endif

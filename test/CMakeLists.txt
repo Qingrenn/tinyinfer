@@ -6,3 +6,4 @@ macro(tinyinfer_add_test name)
 endmacro(tinyinfer_add_test name)
 
 tinyinfer_add_test(mat)
+tinyinfer_add_test(mat_pixel)

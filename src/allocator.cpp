@@ -23,7 +23,7 @@ PoolAllocator::~PoolAllocator()
         for (; it != d->payouts.end(); it++)
         {
             void* ptr = it->second;
-            tinyinfer_LOG("%p still in use", ptr);
+            TINYINFER_LOG("%p still in use", ptr);
         }
     }
 
@@ -49,7 +49,7 @@ void PoolAllocator::set_size_compare_ratio(float scr)
 {
     if (scr <= 0.f || scr > 1.f)
     {
-        tinyinfer_LOG("invalid size compare ratio %f", scr);
+        TINYINFER_LOG("invalid size compare ratio %f", scr);
     }
 
     d->size_compare_ratio = (unsigned int)(scr * 256);
@@ -139,7 +139,7 @@ void PoolAllocator::fastFree(void* ptr)
     }
 
     d->payouts_lock.unlock();
-    tinyinfer_LOG("FATAL ERROR! pool allocator get wild %p", ptr);
+    TINYINFER_LOG("FATAL ERROR! pool allocator get wild %p", ptr);
     tinyinfer::fastFree(ptr);
 }
 
