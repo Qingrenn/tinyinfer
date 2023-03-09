@@ -203,7 +203,8 @@ Mat::Mat(int _w, int _h, int _d, int _c, void* _data, size_t _elemsize, int _ele
     cstep = alignSize((size_t)w * h * d * elemsize, 16) / elemsize;
 }
 
-Mat::Mat(const Mat&)
+Mat::Mat(const Mat& m)
+    : data(m.data), refcount(m.refcount), elemsize(m.elemsize), elempack(m.elempack), allocator(m.allocator), dims(m.dims), w(m.w), h(m.h), d(m.d), c(m.c), cstep(m.cstep)
 {
     addref();
 }
