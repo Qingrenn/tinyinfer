@@ -378,7 +378,7 @@ Mat Mat::reshape(int _w, int _h, int _d, int _c, Allocator* _allocator) const
  * element access
 */
 
-Mat Mat::channel(int _c)
+Mat Mat::channel(int c)
 {
     Mat m(w, h, d, (unsigned char*)data + cstep * c * elemsize, elemsize, elempack, allocator);
     m.dims = dims - 1;
@@ -416,7 +416,7 @@ Mat Mat::row_range(int y, int rows)
     return Mat(w, rows, (unsigned char*)data + (size_t)w * y * elemsize);
 }
 
-const Mat Mat::channel(int _c) const
+const Mat Mat::channel(int c) const
 {
     Mat m(w, h, d, (unsigned char*)data + cstep * c * elemsize, elemsize, elempack, allocator);
     m.dims = dims - 1;

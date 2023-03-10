@@ -1,4 +1,5 @@
 #include "mat.h"
+#include "allocator.h"
 #include <stdlib.h>
 
 static int test_mat_init1()
@@ -7,6 +8,13 @@ static int test_mat_init1()
     tinyinfer::Mat mat1(16, 16);
     tinyinfer::Mat mat2(16, 16, 3);
     tinyinfer::Mat mat3(16, 16, 16, 3);
+
+    tinyinfer::PoolAllocator* allocator = new tinyinfer::PoolAllocator();
+    tinyinfer::Mat mat4(16, (size_t)4u, allocator);
+    tinyinfer::Mat mat5(16, 16, (size_t)4u, allocator);
+    tinyinfer::Mat mat6(16, 16, 3, (size_t)4u, allocator);
+    tinyinfer::Mat mat7(16, 16, 16, 3, (size_t)4u, allocator);
+
     return 0;
 }
 
@@ -21,7 +29,6 @@ static int test_mat_clone()
 static int test_mat_reshape()
 {
     tinyinfer::Mat mat(16, 16, 16, 3);
-    printf("%d %d %d %d %d\n", mat.dims, mat.w, mat.h, mat.d, mat.c);
     mat.reshape(16 * 16 * 16 * 3);
     mat.reshape(16 * 16, 16 * 3);
     mat.reshape(16, 16, 48);
@@ -56,9 +63,9 @@ static int test_mat_fill()
 
 int main()
 {
-    return 0 || test_mat_init1() \
-             || test_mat_clone() \
+    return 0 || test_mat_init1()
+             || test_mat_clone()
              || test_mat_reshape()
-             || test_mat_elemaccess() \
+             || test_mat_elemaccess()
              || test_mat_fill();
 }

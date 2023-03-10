@@ -172,12 +172,31 @@ Mat Mat::from_pixels(const unsigned char* pixels, int type, int w, int h, int st
 
 void Mat::to_pixels(unsigned char* pixels, int type) const
 {
-
+    int type_to = (type & PIXEL_CONVERT_MASK) ? (type >> PIXEL_CONVERT_SHIFT) : (type & PIXEL_FORMAT_MASK);
+    if (type_to == PIXEL_RGB || type_to == PIXEL_BGR)
+    {
+        to_pixels(pixels, type, w *  3);
+    }
+    else if (type_to == PIXEL_GRAY)
+    {
+        to_pixels(pixels, type, w * 1);
+    }
 }
 
 void Mat::to_pixels(unsigned char* pixels, int type, int stride) const
 {
+    if (type & PIXEL_CONVERT_MASK)
+    {
+        TINYINFER_LOG("undeveloped fuction %d", type);
+    }
+    else
+    {
+        if (type == PIXEL_RGB || type == PIXEL_BGR)
+            to_rgb(*this, pixels, stride);
 
+        if (type == PIXEL_GRAY)
+            to_gray(*this, pixels, stride);
+    }
 }
 
 }

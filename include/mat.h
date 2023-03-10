@@ -16,10 +16,10 @@ public:
     Mat(int w, int h, size_t elemsize = 4u, Allocator* allocator = 0);
     Mat(int w, int h, int d, size_t elemsize = 4u, Allocator* allocator = 0);
     Mat(int w, int h, int d, int c, size_t elemsize = 4u, Allocator* allocator = 0);
-    Mat(int w, size_t elemsize, int elempack, Allocator* allocator);
-    Mat(int w, int h, size_t elemsize, int elempack, Allocator* allocator);
-    Mat(int w, int h, int c, size_t elemsize, int elempack, Allocator* allocator);
-    Mat(int w, int h, int d, int c, size_t elemsize, int elempack, Allocator* allocator);
+    Mat(int w, size_t elemsize, int elempack, Allocator* allocator = 0);
+    Mat(int w, int h, size_t elemsize, int elempack, Allocator* allocator = 0);
+    Mat(int w, int h, int c, size_t elemsize, int elempack, Allocator* allocator = 0);
+    Mat(int w, int h, int d, int c, size_t elemsize, int elempack, Allocator* allocator = 0);
 
     Mat(int w, void* data, size_t elemsize = 4u, Allocator* allocator = 0);
     Mat(int w, int h, void* data, size_t elemsize = 4u, Allocator* allocator = 0);
@@ -96,6 +96,7 @@ public:
     // pixel tools
     enum PixelType
     {
+        PIXEL_CONVERT_SHIFT = 16,
         PIXEL_FORMAT_MASK = 0x0000ffff,
         PIXEL_CONVERT_MASK = 0xffff0000,
 
@@ -104,8 +105,8 @@ public:
         PIXEL_GRAY = 3,
     };
 
-    static Mat from_pixels(const unsigned char* pixels, int type, int w, int h, Allocator* allocator);
-    static Mat from_pixels(const unsigned char* pixels, int type, int w, int h, int stride, Allocator* allocator);
+    static Mat from_pixels(const unsigned char* pixels, int type, int w, int h, Allocator* allocator = 0);
+    static Mat from_pixels(const unsigned char* pixels, int type, int w, int h, int stride, Allocator* allocator = 0);
 
     void to_pixels(unsigned char* pixels, int type) const;
     void to_pixels(unsigned char* pixels, int type, int stride) const;
@@ -164,6 +165,18 @@ FORCEINLINE Mat::Mat(int _w, size_t _elemsize, int _elempack, Allocator* _alloca
     : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
 {
     create(_w, _elemsize, _elempack, _allocator);
+}
+
+FORCEINLINE Mat::Mat(int _w, int _h, size_t _elemsize, int _elempack, Allocator* _allocator)
+    : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
+{
+    create(_w, _h, _elemsize, _elempack, _allocator);
+}
+
+FORCEINLINE Mat::Mat(int _w, int _h, int _c, size_t _elemsize, int _elempack, Allocator* _allocator)
+    : data(0), allocator(0), refcount(0), elemsize(0), elempack(0), dims(0), w(0), h(0), d(0), c(0), cstep(0)
+{
+    create(_w, _h, _c, _elemsize, _elempack, _allocator);
 }
 
 FORCEINLINE Mat::Mat(int _w, int _h, int _d, int _c, size_t _elemsize, int _elempack, Allocator* _allocator)
