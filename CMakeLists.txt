@@ -14,10 +14,12 @@ option(TINYINFER_ENABLE_TEST "shared library support" OFF)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 add_subdirectory(./src)
+add_subdirectory(./tools)
 
 if(TINYINFER_ENABLE_TEST)
     enable_testing()
     add_subdirectory(./test)
 endif()
+
 
 # add_subdirectory(./example)
